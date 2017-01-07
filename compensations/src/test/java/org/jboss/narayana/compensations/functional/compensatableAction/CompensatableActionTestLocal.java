@@ -31,6 +31,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jbossts.xts.bytemanSupport.participantCompletion.ParticipantCompletionCoordinatorRules;
 import org.jboss.narayana.compensations.api.CompensatableAction;
+import org.jboss.narayana.compensations.api.CompensatableWork;
 import org.jboss.narayana.compensations.api.CompensationHandler;
 import org.jboss.narayana.compensations.api.ConfirmationHandler;
 import org.jboss.narayana.compensations.api.EnlistException;
@@ -68,9 +69,37 @@ public class CompensatableActionTestLocal {
         final Counter confirmationsCounter = new Counter();
 
         compensatableAction
-                .addWork(workCounter::increment, compensationsCounter::increment, confirmationsCounter::increment)
-                .addWork(workCounter::increment, (CompensationHandler) compensationsCounter::increment)
-                .addWork(workCounter::increment, (ConfirmationHandler) confirmationsCounter::increment).execute();
+                .addWork(new CompensatableWork() {
+					@Override
+					public void execute() {
+						workCounter.increment();
+					}}, new CompensationHandler() {
+						@Override
+						public void compensate() {
+							compensationsCounter.increment();
+						}}, new ConfirmationHandler() {
+							@Override
+							public void confirm() {
+								confirmationsCounter.increment();
+							}})
+                .addWork(new CompensatableWork() {
+					@Override
+					public void execute() {
+						workCounter.increment();
+					}}, (CompensationHandler) new CompensationHandler() {
+						@Override
+						public void compensate() {
+							compensationsCounter.increment();
+						}})
+                .addWork(new CompensatableWork() {
+					@Override
+					public void execute() {
+						workCounter.increment();
+					}}, (ConfirmationHandler) new ConfirmationHandler() {
+						@Override
+						public void confirm() {
+							confirmationsCounter.increment();
+						}}).execute();
 
         assertEquals(3, workCounter.get());
         assertEquals(2, confirmationsCounter.get());
@@ -87,11 +116,50 @@ public class CompensatableActionTestLocal {
 
         try {
             compensatableAction
-                    .addWork(workCounter::increment, compensationsCounter::increment, confirmationsCounter::increment)
-                    .addWork(workCounter::increment, (CompensationHandler) compensationsCounter::increment)
-                    .addWork(workCounter::increment, (ConfirmationHandler) confirmationsCounter::increment).addWork(() -> {
-                throw new RuntimeException("Test");
-            }, compensationsCounter::increment, confirmationsCounter::increment).execute();
+                    .addWork(new CompensatableWork() {
+						@Override
+						public void execute() {
+							workCounter.increment();
+						}}, new CompensationHandler() {
+							@Override
+							public void compensate() {
+								compensationsCounter.increment();
+							}}, new ConfirmationHandler() {
+								@Override
+								public void confirm() {
+									confirmationsCounter.increment();
+								}})
+                    .addWork(new CompensatableWork() {
+						@Override
+						public void execute() {
+							workCounter.increment();
+						}}, (CompensationHandler) new CompensationHandler() {
+							@Override
+							public void compensate() {
+								compensationsCounter.increment();
+							}})
+                    .addWork(new CompensatableWork() {
+						@Override
+						public void execute() {
+							workCounter.increment();
+						}}, (ConfirmationHandler) new ConfirmationHandler() {
+							@Override
+							public void confirm() {
+								confirmationsCounter.increment();
+							}}).addWork(new CompensatableWork() {
+								@Override
+								public void execute() {
+							                throw new RuntimeException("Test");
+								}}, new  CompensationHandler() {
+									@Override
+									public void compensate() {
+										compensationsCounter.increment();
+									}}, new ConfirmationHandler() {
+										@Override
+										public void confirm() {
+											confirmationsCounter.increment();
+										}
+									}).execute();
             fail("RuntimeException expected");
         } catch (RuntimeException e) {
             // Expected

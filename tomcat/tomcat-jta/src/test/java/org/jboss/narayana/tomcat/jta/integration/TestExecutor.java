@@ -43,10 +43,13 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalTime;
+import org.threeten.bp.LocalTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
+import java8.util.function.Consumer;
+import java8.util.function.Predicate;
+import java8.util.stream.StreamSupport;
+
 import java.util.logging.Logger;
 
 /**
@@ -96,9 +99,14 @@ public class TestExecutor {
         TestXAResource.reset();
         createTestTable();
         String testEntry = "test-entry-" + LocalTime.now();
-        TestXAResource testXAResource = new TestXAResource();
+        final TestXAResource testXAResource = new TestXAResource();
 
-        updateXARecoveryModule(m -> m.addXAResourceRecoveryHelper(testXAResource));
+        updateXARecoveryModule(new Consumer<XARecoveryModule>() {
+			@Override
+			public void accept(XARecoveryModule m) {
+				m.addXAResourceRecoveryHelper(testXAResource);
+			}
+		});
 
         try {
             getTransactionManager().begin();
@@ -112,13 +120,28 @@ public class TestExecutor {
 
             return getRecoveryTestResponse(testEntry);
         } finally {
-            updateXARecoveryModule(m -> m.removeXAResourceRecoveryHelper(testXAResource));
+            updateXARecoveryModule(new Consumer<XARecoveryModule>() {
+				@Override
+				public void accept(XARecoveryModule m) {
+					m.removeXAResourceRecoveryHelper(testXAResource);
+				}
+			});
         }
     }
 
-    private void updateXARecoveryModule(Consumer<XARecoveryModule> action) {
-        RecoveryManager.manager().getModules().stream().filter(m -> m instanceof XARecoveryModule)
-                .forEach(m -> action.accept((XARecoveryModule) m));
+    private void updateXARecoveryModule(final Consumer<XARecoveryModule> action) {
+    	StreamSupport.stream(RecoveryManager.manager().getModules()).filter(new Predicate<Object>() {
+			@Override
+			public boolean test(Object m) {
+				return m instanceof XARecoveryModule;
+			}
+		})
+                .forEach(new Consumer<Object>() {
+					@Override
+					public void accept(Object m) {
+						action.accept((XARecoveryModule) m);
+					}
+				});
     }
 
     private Response getRecoveryTestResponse(String testEntry) throws SQLException, NamingException {

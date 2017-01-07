@@ -209,6 +209,36 @@
       <version>${version.org.jboss.logging.jboss-logging-processor}</version>
       <scope>provided</scope>
     </dependency>
+        <dependency>
+          <groupId>net.sourceforge.streamsupport</groupId>
+          <artifactId>streamsupport</artifactId>
+          <version>1.5.3</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>net.sourceforge.streamsupport</groupId>
+          <artifactId>streamsupport-cfuture</artifactId>
+          <version>1.5.3</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>net.sourceforge.streamsupport</groupId>
+          <artifactId>streamsupport-atomic</artifactId>
+          <version>1.5.3</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>net.sourceforge.streamsupport</groupId>
+          <artifactId>streamsupport-flow</artifactId>
+          <version>1.5.3</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>net.sourceforge.streamsupport</groupId>
+          <artifactId>streamsupport-literal</artifactId>
+          <version>1.5.3</version>
+          <scope>test</scope>
+        </dependency>
   </dependencies>
   <profiles>
   <profile>

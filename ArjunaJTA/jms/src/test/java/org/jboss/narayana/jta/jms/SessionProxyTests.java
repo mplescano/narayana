@@ -30,6 +30,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,8 +69,14 @@ public class SessionProxyTests {
         when(transactionHelperMock.isTransactionAvailable()).thenReturn(true);
         when(xaSessionMock.getXAResource()).thenReturn(xaResourceMock);
 
-        List<Synchronization> synchronizations = new ArrayList<>(1);
-        doAnswer(i -> synchronizations.add(i.getArgumentAt(0, Synchronization.class))).when(transactionHelperMock)
+        final List<Synchronization> synchronizations = new ArrayList<>(1);
+        doAnswer(new Answer<Boolean>() {
+
+			@Override
+			public Boolean answer(InvocationOnMock i) throws Throwable {
+				return synchronizations.add(i.getArgumentAt(0, Synchronization.class));
+			}
+		}).when(transactionHelperMock)
                 .registerSynchronization(any(Synchronization.class));
 
         session.close();

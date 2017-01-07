@@ -32,6 +32,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
@@ -88,12 +90,20 @@ public class JmsRecoveryIntegrationTests extends AbstractIntegrationTests {
             targetMethod = "phase2Commit", targetLocation = "ENTRY", helper = "org.jboss.narayana.jta.jms.helpers.BytemanHelper",
             action = "incrementCommitsCounter(); failFirstCommit($0.get_uid());")
     public void shouldCrashBeforeCommitAndRecover() throws Exception {
-        List<Xid> mockXids = new ArrayList<>();
-        when(xaResourceMock.prepare(any(Xid.class))).then(i -> {
-            mockXids.add((Xid) i.getArguments()[0]);
-            return XAResource.XA_OK;
-        });
-        when(xaResourceMock.recover(anyInt())).then(i -> mockXids.toArray(new Xid[mockXids.size()]));
+        final List<Xid> mockXids = new ArrayList<>();
+        when(xaResourceMock.prepare(any(Xid.class))).then(new Answer<Integer>() {
+			@Override
+			public Integer answer(InvocationOnMock i) throws Throwable {
+				mockXids.add((Xid) i.getArguments()[0]);
+				return XAResource.XA_OK;
+			}
+		});
+        when(xaResourceMock.recover(anyInt())).then(new Answer<Xid[]>() {
+			@Override
+			public Xid[] answer(InvocationOnMock invocation) throws Throwable {
+				return mockXids.toArray(new Xid[mockXids.size()]);
+			}
+		});
         when(xaResourceRecoveryHelperMock.getXAResources()).thenReturn(new XAResource[] { xaResourceMock });
 
         TransactionManager.transactionManager().begin();

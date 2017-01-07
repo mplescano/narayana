@@ -235,13 +235,13 @@ public class ObjStoreBrowserTest {
         Set<ObjectName> getTransactionObjectNames() throws MalformedObjectNameException {
             Set<ObjectName> names = JMXServer.getAgent().queryNames(txnBeanName, null);
 
-            return names != null ? names : new HashSet<>();
+            return names != null ? names : new HashSet<ObjectName>();
         }
 
         Set<ObjectName> getHeuristicParticipants() throws MalformedObjectNameException {
             Set<ObjectName> names =  JMXServer.getAgent().queryNames(resourceBeanName, null);
 
-            return names != null ? names : new HashSet<>();
+            return names != null ? names : new HashSet<ObjectName>();
         }
 
         void setRefuseForget(boolean refuse) {

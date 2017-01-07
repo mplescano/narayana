@@ -57,9 +57,9 @@ public class ThreadUtilTest {
 
     @Test
     public void testDisassociateFromDifferentThread() throws InterruptedException {
-        Thread thread = Thread.currentThread();
+        final Thread thread = Thread.currentThread();
 
-        AtomicBoolean called = new AtomicBoolean(false);
+        final AtomicBoolean called = new AtomicBoolean(false);
 
         CoordinatorEnvironmentBean coordinatorEnvironmentBean = arjPropertyManager.getCoordinatorEnvironmentBean();
         coordinatorEnvironmentBean.setAllowCheckedActionFactoryOverride(true);
@@ -74,7 +74,7 @@ public class ThreadUtilTest {
                 };
             }
         });
-        AtomicAction tx = new AtomicAction();
+        final AtomicAction tx = new AtomicAction();
         assertFalse(tx.removeChildThread(ThreadUtil.getThreadId(thread)));
         tx.begin();
 

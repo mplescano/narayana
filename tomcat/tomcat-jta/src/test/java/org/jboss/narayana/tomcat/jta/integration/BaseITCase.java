@@ -34,6 +34,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java8.util.function.Function;
+import java8.util.function.Predicate;
+import java8.util.stream.StreamSupport;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
@@ -120,8 +124,18 @@ public class BaseITCase {
             return true;
         }
 
-        return Arrays.stream(path.listFiles()).map(file -> file.isDirectory() ? deleteDirectory(file) : file.delete())
-                .allMatch(result -> result);
+        return StreamSupport.stream(Arrays.asList(path.listFiles())).map(new Function<File, Boolean>() {
+			@Override
+			public Boolean apply(File file) {
+				return 				file.isDirectory() ? deleteDirectory(file) : file.delete();
+			}
+		})
+                .allMatch(new Predicate<Boolean>() {
+					@Override
+					public boolean test(Boolean result) {
+						return result;
+					}
+				});
     }
 
 }

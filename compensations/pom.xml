@@ -170,6 +170,31 @@
             <version>${version.org.jboss.arquillian.core}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+          <groupId>net.sourceforge.streamsupport</groupId>
+          <artifactId>streamsupport</artifactId>
+          <version>1.5.3</version>
+        </dependency>
+        <dependency>
+          <groupId>net.sourceforge.streamsupport</groupId>
+          <artifactId>streamsupport-cfuture</artifactId>
+          <version>1.5.3</version>
+        </dependency>
+        <dependency>
+          <groupId>net.sourceforge.streamsupport</groupId>
+          <artifactId>streamsupport-atomic</artifactId>
+          <version>1.5.3</version>
+        </dependency>
+        <dependency>
+          <groupId>net.sourceforge.streamsupport</groupId>
+          <artifactId>streamsupport-flow</artifactId>
+          <version>1.5.3</version>
+        </dependency>
+        <dependency>
+          <groupId>net.sourceforge.streamsupport</groupId>
+          <artifactId>streamsupport-literal</artifactId>
+          <version>1.5.3</version>
+        </dependency>        
     </dependencies>
 
     <profiles>

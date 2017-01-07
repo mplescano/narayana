@@ -113,7 +113,7 @@ public class ConnectionImpleTest {
     @Test
     public void checkIfConnectionIsClosedInAfterCompletion() throws Exception {
         transactionManager.begin();
-        ConnectionImple connectionToTest = getConnectionToTest();
+        final ConnectionImple connectionToTest = getConnectionToTest();
         connectionToTest.clearWarnings(); // Initialises the connection
         transactionManager.getTransaction().registerSynchronization(new Synchronization() {
             @Override
@@ -154,7 +154,7 @@ public class ConnectionImpleTest {
     public void closeConnectionInAfterCompletion() throws Exception {
         transactionManager.begin();
         transactionManager.getTransaction().enlistResource(xaResource); // Normally driver does this
-        ConnectionImple connectionToTest = getConnectionToTest();
+        final ConnectionImple connectionToTest = getConnectionToTest();
         connectionToTest.clearWarnings(); // Initialises the connection
         transactionManager.getTransaction().registerSynchronization(new Synchronization() {
             @Override

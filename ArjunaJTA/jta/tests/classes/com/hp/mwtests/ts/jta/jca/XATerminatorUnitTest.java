@@ -69,12 +69,12 @@ import com.hp.mwtests.ts.jta.common.FailureXAResource.FailType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.concurrent.CompletableFuture;
+import java8.util.concurrent.CompletableFuture;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Supplier;
+import java8.util.function.Supplier;
 
 public class XATerminatorUnitTest
 {
@@ -677,7 +677,7 @@ public class XATerminatorUnitTest
         XATerminatorImple xa = new XATerminatorImple();
 
         XAResourceImple xar1 = new XAResourceImple(XAResource.XA_OK, XAResource.XA_OK);
-        XAResourceImple xar2 = new XAResourceImple(XAResource.XA_OK, XAException.XAER_RMFAIL);
+        final XAResourceImple xar2 = new XAResourceImple(XAResource.XA_OK, XAException.XAER_RMFAIL);
         subordinateTransaction.enlistResource(xar1);
         subordinateTransaction.enlistResource(xar2);
 

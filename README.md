@@ -1,4 +1,4 @@
-Narayana
+Narayana 5.5.0.Final for jdk-7
 ========
 
 Getting help
@@ -17,11 +17,11 @@ https://developer.jboss.org/wiki/PerformanceGatesForAcceptingPerformanceFixesInN
 
 Requirements
 ------------
-To build this project JDK 1.8 (or greater) is required.
+To build this project JDK 1.7 is required and libreries of streamsupport.
 
-When building on Mac OS make sure that JAVA_HOME is set to use JDK 1.8:
+When building on Mac OS make sure that JAVA_HOME is set to use JDK 1.7:
 
-	export JAVA_HOME=`/usr/libexec/java_home -v 1.8` 
+	export JAVA_HOME=`/usr/libexec/java_home -v 1.7` 
 
 Building Naryana
 ----------------

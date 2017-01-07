@@ -17,6 +17,8 @@ package org.jboss.stm;
  */
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Handler;
+import io.vertx.core.eventbus.Message;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 
@@ -115,17 +117,20 @@ public class STMVerticle extends AbstractVerticle {
 
     public void start() {
 
-        vertx.eventBus().consumer("ping-address", message -> {
-            //Now send some data
-            for (int i = 0; i < 10; i++) {
+        vertx.eventBus().consumer("ping-address", new Handler<Message<Object>>() {
+			@Override
+			public void handle(Message<Object> message) {
+	            //Now send some data
+	            for (int i = 0; i < 10; i++) {
 
-                int value = STMVerticle.value();
+	                int value = STMVerticle.value();
 
-                message.reply("pong! "+value);
+	                message.reply("pong! "+value);
 
-                logger.info("Sent back pong "+value);
-            }
-        });
+	                logger.info("Sent back pong "+value);
+	            }
+			}
+		});
 
         logger.info("STMVerticle started");
     }
